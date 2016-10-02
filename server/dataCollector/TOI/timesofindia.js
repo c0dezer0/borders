@@ -23,7 +23,7 @@ var getDetails = function(data, $) {
     request(obj.url, function(err, status, body) {
         if (!err) {
             try {
-                fs.writeFile(__dirname + '/' + obj.title + '.html', body, (err) => { console.log(err); });
+                // fs.writeFile(__dirname + '/' + obj.title + '.html', body, (err) => { console.log(err); });
                 var $ = cheerio.load(body);
                 obj.title_full = "" + (obj.url.indexOf('blog') >= 0 ? $('h2').text().sanitize() : $('.heading1').text().sanitize());
                 obj.body_full = "" + (obj.url.indexOf('blog') >= 0 ? $('.content').text().sanitize() : $('.section1').text().sanitize());
@@ -35,27 +35,28 @@ var getDetails = function(data, $) {
                 }
 
                 obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace("Updated: ", ""));
+                obj.date = (new Date()).getTime();
                 // console.log(obj);
-                // MongoClient.connect(config.db.url, function(error, db) {
-                //     if (!error) {
-                //         var collection = db.collection(config.db.collection);
-                //         collection.count({ url: obj.url }, function(e, c) {
+                MongoClient.connect(config.db.url, function(error, db) {
+                    if (!error) {
+                        var collection = db.collection(config.db.collection);
+                        collection.count({ url: obj.url }, function(e, c) {
 
-                //             if (!c) {
+                            if (!c) {
                                 
-                //                 	TODO:
-                //                 		change the isActive and make another function to validate it ;
-                //                 		change pushNotify also
+                                	// TODO:
+                                	// 	change the isActive and make another function to validate it ;
+                                	// 	change pushNotify also
                                 
-                //                 obj.isActive = true;
-                //                 obj.pushNotify = true;
-                //                 collection.insert(obj, function(err) {
-                //                     if (err) console.log(err);
-                //                 });
-                //             }
-                //         });
-                //     }
-                // });
+                                obj.isActive = true;
+                                obj.pushNotify = true;
+                                collection.insert(obj, function(err) {
+                                    if (err) console.log(err);
+                                });
+                            }
+                        });
+                    }
+                });
             } catch (e) {
                 console.log(e, obj.url);
             }
@@ -65,6 +66,7 @@ var getDetails = function(data, $) {
     })
 }
 
+
 var start = function() {
     console.log("starting TOI");
 
@@ -72,7 +74,21 @@ var start = function() {
         if (!err) {
             // console.log(status.statusCode);
             // fs.writeFile(__dirname + '/response.html', body, (err) => { console.log(err); });
+            // this is for featured awesome news
             var $ = cheerio.load(body);
+
+            var feature_title = $('#featuredstory').text().sanitize();
+            var regex = new RegExp(config.dataCollector.keywords.join('|'), 'gi');
+            var matchFound = feature_title.match(regex);
+            if (matchFound != null) {
+                
+                var url = $('#featuredstory').find('a').attr('href');
+                console.log(url, url.indexOf('/liveblog/'));
+                if(url.indexOf('/liveblog/')==-1)
+                	getDetails($('#featuredstory'), $);
+            }
+
+            
             var list = $('#lateststories li').each(function() {
 
                 var title = "" + $(this).text();
@@ -80,12 +96,27 @@ var start = function() {
                 var matchFound = title.match(regex);
                 if (matchFound != null) {
                     // console.log(this);
-                    getDetails(this, $);
+                    // var url = $(this).find('a').attr('href');
+                    // if(url.indexOf('/liveblog/')==-1)
+                    	getDetails(this, $);
                 }
 
 
             });
+            
 
+            var topStories = $('.top-story li').each(function(){
+            	var title = "" + $(this).text();
+                var regex = new RegExp(config.dataCollector.keywords.join('|'), 'gi');
+                var matchFound = title.match(regex);
+                if (matchFound != null) {
+                    // console.log(this);
+                    // var url = $(this).find('a').attr('href');
+                    // if(url.indexOf('/liveblog/')==-1)
+                    	getDetails(this, $);
+                }
+            });
+            
         } else {
             console.log(err);
         }

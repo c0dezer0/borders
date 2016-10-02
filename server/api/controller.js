@@ -7,7 +7,7 @@ module.exports = {
     	try{
 	        MongoClient.connect(config.db.url, function(err, db){
 	        	if(!err){
-	        		db.collection(config.db.collection).find().toArray(function(err, data){
+	        		db.collection(config.db.collection).find().sort({_id:-1}).toArray(function(err, data){
 	        			if(!err){
 	        				res.send(data);
 	        			}
