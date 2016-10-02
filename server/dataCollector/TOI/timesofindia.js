@@ -34,8 +34,8 @@ var getDetails = function(data, $) {
 
                 }
 
-                obj.publishedOn = $('.time_cptn span').text().replace("Updated: ", "")
-                    // console.log(obj);
+                obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace("Updated: ", ""));
+                // console.log(obj);
                 MongoClient.connect(config.db.url, function(error, db) {
                     if (!error) {
                         var collection = db.collection(config.db.collection);
