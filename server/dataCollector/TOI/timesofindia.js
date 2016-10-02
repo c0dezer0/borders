@@ -22,39 +22,43 @@ var getDetails = function(data, $) {
 
     request(obj.url, function(err, status, body) {
         if (!err) {
-            fs.writeFile(__dirname + '/' + obj.title + '.html', body, (err) => { console.log(err); });
-            var $ = cheerio.load(body);
-            obj.title_full = "" + (obj.url.indexOf('blog') >= 0 ? $('h2').text().sanitize() : $('.heading1').text().sanitize());
-            obj.body_full = "" + (obj.url.indexOf('blog') >= 0 ? $('.content').text().sanitize() : $('.section1').text().sanitize());
+            try {
+                fs.writeFile(__dirname + '/' + obj.title + '.html', body, (err) => { console.log(err); });
+                var $ = cheerio.load(body);
+                obj.title_full = "" + (obj.url.indexOf('blog') >= 0 ? $('h2').text().sanitize() : $('.heading1').text().sanitize());
+                obj.body_full = "" + (obj.url.indexOf('blog') >= 0 ? $('.content').text().sanitize() : $('.section1').text().sanitize());
 
-            obj.media = {
+                obj.media = {
                     type: "" + $('.highlight').children().prop("tagName"),
                     src: URL + $('.highlight').children().attr('src')
 
                 }
-            
-            obj.publishedOn = $('.time_cptn span').text().replace("Updated: ","")
-                // console.log(obj);
-            MongoClient.connect(config.db.url, function(error, db) {
-                if (!error) {
-                    var collection = db.collection(config.db.collection);
-                    collection.count({ url: obj.url }, function(e, c) {
 
-                        if (!c) {
-                            /*
-                            	TODO:
-                            		change the isActive and make another function to validate it ;
-                            		change pushNotify also
-                            */
-                            obj.isActive = true;
-                            obj.pushNotify = true;
-                            collection.insert(obj, function(err) {
-                                if (err) console.log(err);
-                            });
-                        }
-                    });
-                }
-            });
+                obj.publishedOn = $('.time_cptn span').text().replace("Updated: ", "")
+                    // console.log(obj);
+                MongoClient.connect(config.db.url, function(error, db) {
+                    if (!error) {
+                        var collection = db.collection(config.db.collection);
+                        collection.count({ url: obj.url }, function(e, c) {
+
+                            if (!c) {
+                                /*
+                                	TODO:
+                                		change the isActive and make another function to validate it ;
+                                		change pushNotify also
+                                */
+                                obj.isActive = true;
+                                obj.pushNotify = true;
+                                collection.insert(obj, function(err) {
+                                    if (err) console.log(err);
+                                });
+                            }
+                        });
+                    }
+                });
+            } catch (e) {
+                console.log(e, obj.url);
+            }
         } else {
             console.log(obj.url, err);
         }
