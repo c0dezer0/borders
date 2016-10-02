@@ -19,7 +19,7 @@ app.get('/ping', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname + '/../public/index.html'));
+    res.send('this is news app');
 });
 
 app.get('/*', (req, res) => {
