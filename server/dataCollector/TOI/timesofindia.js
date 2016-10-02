@@ -11,7 +11,7 @@ String.prototype.sanitize = function() {
     x = x.replace(/\n/gi, '');
     x = x.replace(/\'s/gi, "'s");
     x = x.replace(/\'/gi, "");
-    // x = x.replace(/[^\]/g,'');
+    x = x.replace(/+/g,'');
     return x;
 }
 var getDetails = function(data, $) {
@@ -29,33 +29,33 @@ var getDetails = function(data, $) {
                 obj.body_full = "" + (obj.url.indexOf('blog') >= 0 ? $('.content').text().sanitize() : $('.section1').text().sanitize());
 
                 obj.media = {
-                    type: "" + (obj.url.indexOf('blog') >= 0 ? '' : $('.highlight').children().prop("tagName")),
-                    src: (obj.url.indexOf('blog') >= 0 ? '' : (URL + $('.highlight').children().attr('src')))
+                    type: '' + (obj.url.indexOf('blog') >= 0 ? '' : 'IMG'),
+                    src: (obj.url.indexOf('blog') >= 0 ? '' : (URL + $('.highlight img').attr('src')))
 
                 }
 
                 obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace("Updated: ", ""));
                 // console.log(obj);
-                MongoClient.connect(config.db.url, function(error, db) {
-                    if (!error) {
-                        var collection = db.collection(config.db.collection);
-                        collection.count({ url: obj.url }, function(e, c) {
+                // MongoClient.connect(config.db.url, function(error, db) {
+                //     if (!error) {
+                //         var collection = db.collection(config.db.collection);
+                //         collection.count({ url: obj.url }, function(e, c) {
 
-                            if (!c) {
-                                /*
-                                	TODO:
-                                		change the isActive and make another function to validate it ;
-                                		change pushNotify also
-                                */
-                                obj.isActive = true;
-                                obj.pushNotify = true;
-                                collection.insert(obj, function(err) {
-                                    if (err) console.log(err);
-                                });
-                            }
-                        });
-                    }
-                });
+                //             if (!c) {
+                                
+                //                 	TODO:
+                //                 		change the isActive and make another function to validate it ;
+                //                 		change pushNotify also
+                                
+                //                 obj.isActive = true;
+                //                 obj.pushNotify = true;
+                //                 collection.insert(obj, function(err) {
+                //                     if (err) console.log(err);
+                //                 });
+                //             }
+                //         });
+                //     }
+                // });
             } catch (e) {
                 console.log(e, obj.url);
             }
