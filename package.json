@@ -1,0 +1,39 @@
+{
+  "name": "borders",
+  "version": "1.0.0",
+  "description": "This is news hunt app",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c0dezer0/borders.git"
+  },
+  "keywords": [
+    "border",
+    "news",
+    "india",
+    "manish",
+    "hitesh",
+    "pakistan",
+    "terror"
+  ],
+  "author": "Manish Kumar <mail2manish15@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/c0dezer0/borders/issues"
+  },
+  "homepage": "https://github.com/c0dezer0/borders#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cheerio": "^0.22.0",
+    "express": "^4.14.0",
+    "fs": "0.0.1-security",
+    "mongodb": "^2.2.10",
+    "node-cron": "^1.1.2",
+    "path": "^0.12.7",
+    "request": "^2.75.0"
+  }
+}
