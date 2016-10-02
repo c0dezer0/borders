@@ -7,14 +7,19 @@ module.exports = {
     	try{
 	        MongoClient.connect(config.db.url, function(err, db){
 	        	if(!err){
-	        		db.collection(config.db.collection).find().sort({_id:-1}).toArray(function(err, data){
+	        		var collection = db.collection(config.db.collection);
+	        		collection.find().sort({_id:-1}).toArray(function(err, data){
 	        			if(!err){
 	        				res.send(data);
+	        				// var new_data = data.map(function(e){ delete e._id; return e;});
+	        				// db.collection('old-news').insert(new_data, function(err){console.log(err);});
 	        			}
 	        			else{
 	        				throw err;
 	        			}
 	        		});
+
+
 	        	}
 	        	else {
 	        		throw err;

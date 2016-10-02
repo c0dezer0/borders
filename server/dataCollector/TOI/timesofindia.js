@@ -40,7 +40,7 @@ var getDetails = function(data, $) {
                 MongoClient.connect(config.db.url, function(error, db) {
                     if (!error) {
                         var collection = db.collection(config.db.collection);
-                        collection.count({ url: obj.url }, function(e, c) {
+                        collection.count(obj, function(e, c) {
 
                             if (!c) {
                                 
@@ -96,8 +96,8 @@ var start = function() {
                 var matchFound = title.match(regex);
                 if (matchFound != null) {
                     // console.log(this);
-                    // var url = $(this).find('a').attr('href');
-                    // if(url.indexOf('/liveblog/')==-1)
+                    var url = $(this).find('a').attr('href');
+                    if(url.indexOf('/liveblog/')==-1)
                     	getDetails(this, $);
                 }
 
@@ -111,8 +111,8 @@ var start = function() {
                 var matchFound = title.match(regex);
                 if (matchFound != null) {
                     // console.log(this);
-                    // var url = $(this).find('a').attr('href');
-                    // if(url.indexOf('/liveblog/')==-1)
+                    var url = $(this).find('a').attr('href');
+                    if(url.indexOf('/liveblog/')==-1)
                     	getDetails(this, $);
                 }
             });
