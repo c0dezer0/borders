@@ -8,7 +8,7 @@ var app = express();
 
 app.use(bodyParser.json());
 
-app.use(express.static(path.resolve(__dirname + '/../public')));
+app.use('/static', express.static(path.resolve(__dirname + '/../public')));
 
 
 var api = require('./api').init(app);
