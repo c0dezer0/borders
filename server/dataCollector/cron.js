@@ -8,6 +8,6 @@ module.exports = function(app){
 	  console.log('running a task every 5 minutes');
 	  toi(app);
 	});
-	// toi(app);
+	toi(app);
 	
 }
