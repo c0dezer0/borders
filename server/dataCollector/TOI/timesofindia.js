@@ -6,51 +6,58 @@ var MongoClient = require('mongodb').MongoClient;
 
 var URL = "http://timesofindia.indiatimes.com";
 
-String.prototype.sanitize=function(){
-	var x = this.replace(/\s\s+/g, '');
-	x = x.replace(/\n/gi, '');
-	x = x.replace(/\'s/gi,"'s");
-	x = x.replace(/\'/gi,"");
-	// x = x.replace(/[^\]/g,'');
-	return x;
+String.prototype.sanitize = function() {
+    var x = this.replace(/\s\s+/g, '');
+    x = x.replace(/\n/gi, '');
+    x = x.replace(/\'s/gi, "'s");
+    x = x.replace(/\'/gi, "");
+    // x = x.replace(/[^\]/g,'');
+    return x;
 }
 var getDetails = function(data, $) {
     var obj = {};
     obj.title = "" + $(data).text().sanitize();
-    obj.url = $(data).find('a').attr('href')[0]=='/' ? (URL + $(data).find('a').attr('href')): $(data).find('a').attr('href');
+    obj.url = $(data).find('a').attr('href')[0] == '/' ? (URL + $(data).find('a').attr('href')) : $(data).find('a').attr('href');
     obj.source = "toi";
 
-    request(obj.url, function(err, status, body){
-    	if(!err){
-    		// fs.writeFile(__dirname + '/'+obj.title+'.html', body, (err) => { console.log(err); });
-    		var $ = cheerio.load(body);
-    		obj.title_full = "" + ($('.heading1').text().sanitize());
-    		obj.body_full = "" + $('.section1').text().sanitize();
-    		// console.log(obj);
-    		MongoClient.connect(config.db.url, function(error, db){
-    			if(!error){
-    				var collection = db.collection(config.db.collection);
-					collection.count({url:obj.url}, function(e, c){
-						
-						if(!c){
-							/*
-								TODO:
-									change the isActive and make another function to validate it ;
-									change pushNotify also
-							*/
-							obj.isActive = true;
-							obj.pushNotify = true ;
-							collection.insert(obj, function(err){
-								if(err) console.log(err);
-							});
-						}
-					});
-    			}
-    		});
-    	}
-    	else{
-    		console.log(obj.url,err);
-    	}
+    request(obj.url, function(err, status, body) {
+        if (!err) {
+            fs.writeFile(__dirname + '/' + obj.title + '.html', body, (err) => { console.log(err); });
+            var $ = cheerio.load(body);
+            obj.title_full = "" + (obj.url.indexOf('blog') >= 0 ? $('h2').text().sanitize() : $('.heading1').text().sanitize());
+            obj.body_full = "" + (obj.url.indexOf('blog') >= 0 ? $('.content').text().sanitize() : $('.section1').text().sanitize());
+
+            obj.media = {
+                    type: "" + $('.highlight').children().prop("tagName"),
+                    src: URL + $('.highlight').children().attr('src')
+
+                }
+            
+            obj.publishedOn = $('.time_cptn span').text().replace("Updated: ","")
+                // console.log(obj);
+            MongoClient.connect(config.db.url, function(error, db) {
+                if (!error) {
+                    var collection = db.collection(config.db.collection);
+                    collection.count({ url: obj.url }, function(e, c) {
+
+                        if (!c) {
+                            /*
+                            	TODO:
+                            		change the isActive and make another function to validate it ;
+                            		change pushNotify also
+                            */
+                            obj.isActive = true;
+                            obj.pushNotify = true;
+                            collection.insert(obj, function(err) {
+                                if (err) console.log(err);
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            console.log(obj.url, err);
+        }
     })
 }
 

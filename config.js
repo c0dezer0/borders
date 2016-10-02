@@ -7,7 +7,6 @@ module.exports = {
     "env": process.env.NODE_ENV || "development",
     "host": "localhost",
     "dataCollector":{
-    	"interval" : 600,  // time in seconds
     	"keywords": ['pakistan', 'terror', 'terrorist','pak', 'baloch','surgical']
     },
     "cron": "*/5 * * * *" // every 10 minutes
