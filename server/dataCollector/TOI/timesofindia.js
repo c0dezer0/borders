@@ -35,7 +35,7 @@ var getDetails = function(data, $) {
                 }
 
                 obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace("Updated: ", ""));
-                obj.date = (new Date()).getTime();
+                // obj.date = (new Date()).getTime();
                 // console.log(obj);
                 MongoClient.connect(config.db.url, function(error, db) {
                     if (!error) {
@@ -50,6 +50,7 @@ var getDetails = function(data, $) {
                                 
                                 obj.isActive = true;
                                 obj.pushNotify = true;
+                                obj.date = (new Date()).getTime();
                                 collection.insert(obj, function(err) {
                                     if (err) console.log(err);
                                 });
