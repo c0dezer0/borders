@@ -11,7 +11,7 @@ String.prototype.sanitize = function() {
     x = x.replace(/\n/gi, '');
     x = x.replace(/\'s/gi, "'s");
     x = x.replace(/\'/gi, "");
-    x = x.replace(/+/g,'');
+    // x = x.replace(/+/g,'');
     return x;
 }
 var getDetails = function(data, $) {
