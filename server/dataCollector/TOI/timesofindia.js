@@ -29,8 +29,8 @@ var getDetails = function(data, $) {
                 obj.body_full = "" + (obj.url.indexOf('blog') >= 0 ? $('.content').text().sanitize() : $('.section1').text().sanitize());
 
                 obj.media = {
-                    type: "" + $('.highlight').children().prop("tagName"),
-                    src: URL + $('.highlight').children().attr('src')
+                    type: "" + (obj.url.indexOf('blog') >= 0 ? '' : $('.highlight').children().prop("tagName")),
+                    src: (obj.url.indexOf('blog') >= 0 ? '' : (URL + $('.highlight').children().attr('src')))
 
                 }
 
