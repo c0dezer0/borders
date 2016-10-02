@@ -10,5 +10,5 @@ module.exports = {
     	"interval" : 600,  // time in seconds
     	"keywords": ['pakistan', 'terror', 'terrorist','pak', 'baloch','surgical']
     },
-    "cron": "*/10 * * * *" // every 10 minutes
+    "cron": "*/5 * * * *" // every 10 minutes
 }
