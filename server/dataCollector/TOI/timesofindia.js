@@ -7,7 +7,7 @@ var MongoClient = require('mongodb').MongoClient;
 var URL = "http://timesofindia.indiatimes.com";
 
 String.prototype.sanitize = function() {
-    var x = this.replace(/\s\s+/g, '');
+    var x = this.replace(/\s\s+/g, ' ');
     x = x.replace(/\n/gi, '');
     x = x.replace(/\'s/gi, "'s");
     x = x.replace(/\'/gi, "");
