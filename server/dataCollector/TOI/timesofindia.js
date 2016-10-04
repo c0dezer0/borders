@@ -35,25 +35,29 @@ var getDetails = function(data, $) {
                 }
 
                 obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace("Updated: ", ""));
-                // obj.date = (new Date()).getTime();
-                // console.log(obj);
+                
                 MongoClient.connect(config.db.url, function(error, db) {
                     if (!error) {
                         var collection = db.collection(config.db.collection);
                         collection.count(obj, function(e, c) {
 
                             if (!c) {
-                                
-                                	// TODO:
-                                	// 	change the isActive and make another function to validate it ;
-                                	// 	change pushNotify also
-                                
-                                obj.isActive = true;
-                                obj.pushNotify = true;
-                                obj.date = (new Date()).getTime();
-                                collection.insert(obj, function(err) {
-                                    if (err) console.log(err);
+
+                                // TODO:
+                                //  change the isActive and make another function to validate it ;
+                                //  change pushNotify also
+                                collection.update({ url: obj.url }, { $set: { isActive: false, pushNotify: false } }, function(err, result) {
+                                    if(!err){
+                                        obj.isActive = true;
+                                        obj.pushNotify = false;
+                                        obj.date = (new Date()).getTime();
+                                        collection.insert(obj, function(err) {
+                                            if (err) console.log(err);
+                                        });
+                                    }
+                                    
                                 });
+
                             }
                         });
                     }
@@ -82,14 +86,14 @@ var start = function() {
             var regex = new RegExp(config.dataCollector.keywords.join('|'), 'gi');
             var matchFound = feature_title.match(regex);
             if (matchFound != null) {
-                
+
                 var url = $('#featuredstory').find('a').attr('href');
                 console.log(url, url.indexOf('/liveblog/'));
-                if(url.indexOf('/liveblog/')==-1)
-                	getDetails($('#featuredstory'), $);
+                if (url.indexOf('/liveblog/') == -1)
+                    getDetails($('#featuredstory'), $);
             }
 
-            
+
             var list = $('#lateststories li').each(function() {
 
                 var title = "" + $(this).text();
@@ -98,26 +102,26 @@ var start = function() {
                 if (matchFound != null) {
                     // console.log(this);
                     var url = $(this).find('a').attr('href');
-                    if(url.indexOf('/liveblog/')==-1)
-                    	getDetails(this, $);
+                    if (url.indexOf('/liveblog/') == -1)
+                        getDetails(this, $);
                 }
 
 
             });
-            
 
-            var topStories = $('.top-story li').each(function(){
-            	var title = "" + $(this).text();
+
+            var topStories = $('.top-story li').each(function() {
+                var title = "" + $(this).text();
                 var regex = new RegExp(config.dataCollector.keywords.join('|'), 'gi');
                 var matchFound = title.match(regex);
                 if (matchFound != null) {
                     // console.log(this);
                     var url = $(this).find('a').attr('href');
-                    if(url.indexOf('/liveblog/')==-1)
-                    	getDetails(this, $);
+                    if (url.indexOf('/liveblog/') == -1)
+                        getDetails(this, $);
                 }
             });
-            
+
         } else {
             console.log(err);
         }
