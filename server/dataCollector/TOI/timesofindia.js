@@ -35,7 +35,7 @@ var getDetails = function(data, $) {
                 }
 
                 obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace("Updated: ", ""));
-                
+
                 MongoClient.connect(config.db.url, function(error, db) {
                     if (!error) {
                         var collection = db.collection(config.db.collection);
@@ -46,8 +46,8 @@ var getDetails = function(data, $) {
                                 // TODO:
                                 //  change the isActive and make another function to validate it ;
                                 //  change pushNotify also
-                                collection.update({ url: obj.url }, { $set: { isActive: false, pushNotify: false } }, function(err, result) {
-                                    if(!err){
+                                collection.update({ url: obj.url }, { $set: { isActive: false, pushNotify: false } }, { multi: true }, function(err, result) {
+                                    if (!err) {
                                         obj.isActive = true;
                                         obj.pushNotify = false;
                                         obj.date = (new Date()).getTime();
@@ -55,7 +55,7 @@ var getDetails = function(data, $) {
                                             if (err) console.log(err);
                                         });
                                     }
-                                    
+
                                 });
 
                             }
