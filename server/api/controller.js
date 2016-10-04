@@ -4,11 +4,12 @@ var config = require('../../config.js')
 
 module.exports = {
     getNews: function(req, res) {
+    	var page= Number(req.query.page) || 1;
     	try{
 	        MongoClient.connect(config.db.url, function(err, db){
 	        	if(!err){
 	        		var collection = db.collection(config.db.collection);
-	        		collection.find().sort({_id:-1}).toArray(function(err, data){
+	        		collection.find().skip(10*(page-1)).limit(10).sort({_id:-1}).toArray(function(err, data){
 	        			if(!err){
 	        				res.send(data);
 	        				// var new_data = data.map(function(e){ delete e._id; return e;});
