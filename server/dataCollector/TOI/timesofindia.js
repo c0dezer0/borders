@@ -11,7 +11,7 @@ String.prototype.sanitize = function() {
     x = x.replace(/\n/gi, '');
     x = x.replace(/\'s/gi, "'s");
     x = x.replace(/\'/gi, "");
-    // x = x.replace(/+/g,'');
+    x = x.replace(/\+/g,'');
     return x;
 }
 var getDetails = function(data, $) {
@@ -29,8 +29,8 @@ var getDetails = function(data, $) {
                 obj.body_full = "" + (obj.url.indexOf('blog') >= 0 ? $('.content').text().sanitize() : $('.section1').text().sanitize());
 
                 obj.media = {
-                    type: '' + (obj.url.indexOf('blog') >= 0 ? '' : 'IMG'),
-                    src: (obj.url.indexOf('blog') >= 0 ? '' : (URL + $('.highlight img').attr('src')))
+                    type: '' + (obj.url.indexOf('blog') >= 0 ? 'IMG' : 'IMG'),
+                    src: (obj.url.indexOf('blog') >= 0 ? ("https://blogs.timesofindia.indiatimes.com" + $('.content').find('a').attr('href').replace('../..', '')) : (URL + $('.highlight img').attr('src')))
 
                 }
 
