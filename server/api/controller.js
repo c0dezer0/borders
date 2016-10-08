@@ -46,6 +46,9 @@ module.exports = {
 
                 }
                 var q = req.query;
+                for(key in q){
+                	q[key] = { $regex: q[key], $options: 'i'};
+                }
                 q.isActive = true;
                 console.log(q);
                 MongoClient.connect(config.db.url, function(err, db) {
