@@ -13,7 +13,7 @@ module.exports = {
                         if (!err) {
 
                             data = data.map(function(news) {
-                                news.url = '/api/news/' + news._id;
+                                news.api_url = '/api/news/' + news._id;
                                 return news;
                             })
                             res.send(data);
