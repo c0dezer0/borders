@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
-    "prod" : "NODE_ENV=production node app.js",
+    "prod": "NODE_ENV=production node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -30,6 +30,7 @@
   "dependencies": {
     "body-parser": "^1.15.2",
     "cheerio": "^0.22.0",
+    "compression": "^1.6.2",
     "express": "^4.14.0",
     "fs": "0.0.1-security",
     "mongodb": "^2.2.10",
