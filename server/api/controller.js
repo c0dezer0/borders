@@ -92,6 +92,7 @@ module.exports = {
                                             list = list.map(function(e) { e.text = e._id; delete e._id; return e; });
                                             data.timeline = list;
                                             delete data.body_full;
+                                            db.close();
                                             res.send(data);
                                         } else throw err;
                                     });
@@ -108,6 +109,6 @@ module.exports = {
         res.send("hotel details");
     },
     health: function(req, res) {
-        res.send("Working!");
+        res.send("health is up!");
     }
 }

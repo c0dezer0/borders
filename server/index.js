@@ -4,6 +4,8 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var app = express();
 
+var compression = require('compression');
+app.use(compression());
 // app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
