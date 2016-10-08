@@ -4,8 +4,13 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var app = express();
 
+// compression of responses
 var compression = require('compression');
 app.use(compression());
+
+// security 
+var helmet = require('helmet');
+app.use(helmet());
 // app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
