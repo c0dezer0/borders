@@ -13,7 +13,7 @@ module.exports = {
                         if (!err) {
 
                             data = data.map(function(news) {
-                                news.api_url = (req.secure?'https:':'http:')+'//'+req.headers.host+'/api/news/' + news._id;
+                                news.api_url = (req.protocol)+'//'+req.headers.host+'/api/news/' + news._id;
                                 return news;
                             })
                             res.send(data);
@@ -58,7 +58,7 @@ module.exports = {
                             if (!err) {
                                 db.close();
                                 data = data.map(function(news) {
-                                    news.api_url = (req.secure?'https:':'http:')+'//'+req.headers.host+'/api/news/' + news._id;
+                                    news.api_url = (req.protocol)+'//'+req.headers.host+'/api/news/' + news._id;
                                     return news;
                                 });
                                 res.send(data);
