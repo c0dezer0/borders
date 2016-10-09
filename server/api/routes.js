@@ -8,6 +8,10 @@ function initData(app) {
 
     app.get('/api/news/:id', controller.getNewsDetails);
     
+    app.get('/api/news/:id/push', controller.sendPushNotification);
+
+    app.delete('/api/news/:id', controller.deleteNews);
+    
     app.get('/api/health', controller.health);
 }
 

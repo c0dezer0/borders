@@ -1,6 +1,8 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 var config = require('../../config.js')
+var pushNotify = require('../services/pushNotify.js');
+
 
 module.exports = {
     getNews: function(req, res) {
@@ -13,7 +15,7 @@ module.exports = {
                         if (!err) {
 
                             data = data.map(function(news) {
-                                news.api_url = (req.protocol)+'//'+req.headers.host+'/api/news/' + news._id;
+                                news.api_url = (req.protocol) + '://' + req.headers.host + '/api/news/' + news._id;
                                 return news;
                             })
                             res.send(data);
@@ -46,8 +48,8 @@ module.exports = {
 
                 }
                 var q = req.query;
-                for(key in q){
-                	q[key] = { $regex: q[key], $options: 'i'};
+                for (key in q) {
+                    q[key] = { $regex: q[key], $options: 'i' };
                 }
                 q.isActive = true;
                 console.log(q);
@@ -58,7 +60,7 @@ module.exports = {
                             if (!err) {
                                 db.close();
                                 data = data.map(function(news) {
-                                    news.api_url = (req.protocol)+'//'+req.headers.host+'/api/news/' + news._id;
+                                    news.api_url = (req.protocol) + '://' + req.headers.host + '/api/news/' + news._id;
                                     return news;
                                 });
                                 res.send(data);
@@ -89,7 +91,11 @@ module.exports = {
                                     ])
                                     .toArray(function(err, list) {
                                         if (!err) {
-                                            list = list.map(function(e) { e.text = e._id; delete e._id; return e; });
+                                            list = list.map(function(e) {
+                                                e.text = e._id;
+                                                delete e._id;
+                                                return e;
+                                            });
                                             data.timeline = list;
                                             delete data.body_full;
                                             db.close();
@@ -105,8 +111,36 @@ module.exports = {
             }
         }
     },
-    detail: function(req, res) {
-        res.send("hotel details");
+    sendPushNotification: function(req, res) {
+        var id = req.params.id;
+        try {
+            MongoClient.connect(config.db.url, function(err, db) {
+                if (!err) {
+                    var collection = db.collection(config.db.collection);
+                    collection.findOne({ _id: ObjectId(id)}, function(err, data) {
+                        if (!err) {
+                            pushNotify('news', data.title, data.body, function(err, response) {
+                                res.send({ error: err, body: response });
+                                if(!err){
+                                	collection.update({ _id: ObjectId(id) }, { $set: { pushNotify: true } });
+                                }
+                            });
+                        }
+                        else throw err;
+                    });
+                }
+                else throw err;
+            });
+        }
+        catch(e){
+        	res.send({error: e});
+        }
+
+
+        //res.send("hotel details");
+    },
+    deleteNews: function(req, res) {
+        res.send("delete news")
     },
     health: function(req, res) {
         res.send("health is up!");

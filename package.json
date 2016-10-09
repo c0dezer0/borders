@@ -32,6 +32,7 @@
     "cheerio": "^0.22.0",
     "compression": "^1.6.2",
     "express": "^4.14.0",
+    "fcm-push": "^1.1.0",
     "fs": "0.0.1-security",
     "helmet": "^2.3.0",
     "mongodb": "^2.2.10",

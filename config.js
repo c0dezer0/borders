@@ -9,5 +9,6 @@ module.exports = {
     "dataCollector":{
     	"keywords": ['pakistan','terror', 'terrorist','pak', 'baloch','surgical','uri','baramulla','attack']
     },
-    "cron": "*/5 * * * *" // every 10 minutes
+    "cron": "*/5 * * * *", // every 10 minutes
+    "pushNotificationKey": "AIzaSyBkzhOxrf7frA3gn66xfdGgXRiS4ou3kJU"
 }

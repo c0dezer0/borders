@@ -30,7 +30,7 @@ var getDetails = function(data, $) {
 
                 obj.media = {
                     type: '' + (obj.url.indexOf('blog') >= 0 ? 'IMG' : 'IMG'),
-                    src: (obj.url.indexOf('blog') >= 0 ? ("https://blogs.timesofindia.indiatimes.com" + $('.content').find('a').attr('href').replace('../..', '')) : (URL + $('.highlight img').attr('src')))
+                    src: (obj.url.indexOf('blog') >= 0 ? ($('.content').find('a').attr('href')?("https://blogs.timesofindia.indiatimes.com" + $('.content').find('a').attr('href').replace('../..', '')):'') : (URL + $('.highlight img').attr('src')))
 
                 }
 
