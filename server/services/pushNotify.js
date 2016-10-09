@@ -1,32 +1,32 @@
-var FCM = require('fcm-push');
+
 var config = require('../../config.js');
+var request = require('request');
 
+var serverKey = 'key='+config.pushNotificationKey;
 
-var serverKey = config.pushNotificationKey;
-var fcm = new FCM(serverKey);
-
+// console.log(fcm.send());
 var init = function(topic, title, body, cb) {
     var message = {
-        to: topic, // required fill with device token or topics
-        collapse_key: 'news',
-        data: {
-            your_custom_data_key: 'your_custom_data_value'
-        },
+        to: '/topics/news',
         notification: {
             title: title,
             body: body
         }
     };
+    var options = {
+        method: 'POST',
+        url: 'https://fcm.googleapis.com/fcm/send',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': serverKey
+        },
+        body: JSON.stringify(message)
 
-    //callback style
-    fcm.send(message, function(err, response) {
-        if (err) {
-            console.log("Something has gone wrong!");
-        } else {
-            console.log("Successfully sent with response: ", response);
-        }
-        if(typeof cb == 'function')
-            cb(err, response);
+    }
+    request(options, function(err, status, body){
+        console.log(err, body);
+        cb(err, body);
     });
+
 }
 module.exports = init;
