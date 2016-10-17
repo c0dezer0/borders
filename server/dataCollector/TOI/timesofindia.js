@@ -46,9 +46,10 @@ var getDetails = function(data, $) {
                                 // TODO:
                                 //  change the isActive and make another function to validate it ;
                                 //  change pushNotify also
-                                collection.update({ url: obj.url }, { $set: { isActive: false, pushNotify: false } }, { multi: true }, function(err, result) {
+                                collection.update({ url: obj.url }, { $set: { isVerified: true, isActive: false } }, { multi: true }, function(err, result) {
                                     if (!err) {
-                                        obj.isActive = true;
+                                        obj.isActive = false;
+                                        obj.isVerified = false;
                                         obj.pushNotify = false;
                                         obj.date = (new Date()).getTime();
                                         collection.insert(obj, function(err) {

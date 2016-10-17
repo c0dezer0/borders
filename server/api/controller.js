@@ -11,13 +11,13 @@ module.exports = {
             MongoClient.connect(config.db.url, function(err, db) {
                 if (!err) {
                     var collection = db.collection(config.db.collection);
-                    collection.find({ isActive: true }).skip(10 * (page - 1)).limit(10).sort({ _id: -1 }).toArray(function(err, data) {
+                    collection.find({ isVerified:true, isActive: true }).skip(10 * (page - 1)).limit(10).sort({ _id: -1 }).toArray(function(err, data) {
                         if (!err) {
 
                             data = data.map(function(news) {
                                 news.api_url = (req.protocol) + '://' + req.headers.host + '/api/news/' + news._id;
                                 return news;
-                            })
+                            });
                             res.send(data);
                             // var new_data = data.map(function(e){ delete e._id; return e;});
                             // db.collection('old-news').insert(new_data, function(err){console.log(err);});
@@ -85,7 +85,7 @@ module.exports = {
                             if (!err) {
                                 collection
                                     .aggregate([
-                                        { $match: { url: data.url } },
+                                        { $match: { url: data.url, isVerified:true } },
                                         { $group: { _id: "$body_full", publishedOn: { $last: "$publishedOn" }, date: { $last: "$date" } } }
 
                                     ])
@@ -119,12 +119,13 @@ module.exports = {
                     var collection = db.collection(config.db.collection);
                     collection.findOne({ _id: ObjectId(id)}, function(err, data) {
                         if (!err) {
-                            pushNotify('news', data.title, data.body, function(err, response) {
-                                res.send({ error: err, body: response });
-                                if(!err){
-                                	collection.update({ _id: ObjectId(id) }, { $set: { pushNotify: true } });
-                                }
-                            });
+                            if(!data.pushNotify)
+                                pushNotify('news', data.title, data.body, function(err, response) {
+                                    res.send({ error: err, body: response });
+                                    if(!err){
+                                    	collection.update({ _id: ObjectId(id) }, { $set: { pushNotify: true , isVerified:true, isActive:true } });
+                                    }
+                                });
                         }
                         else throw err;
                     });
@@ -138,6 +139,71 @@ module.exports = {
 
 
         //res.send("hotel details");
+    },
+    publishNews: function(req, res){
+        var id = req.params.id;
+        try {
+            MongoClient.connect(config.db.url, function(err, db) {
+                if (!err) {
+                    var collection = db.collection(config.db.collection);
+                    collection.update({_id: ObjectId(id)}, {$set:{isVerified:true, isActive:true}}, function(err){
+                        if(!err){
+                            res.send({error:false});
+                        }
+                        else throw err;
+                    })
+                }
+                else throw err;
+            });
+        }
+        catch(e){
+            res.send({error: e});
+        }
+    },
+    unpublishNews: function(req, res){
+        var id = req.params.id;
+        try {
+            MongoClient.connect(config.db.url, function(err, db) {
+                if (!err) {
+                    var collection = db.collection(config.db.collection);
+                    collection.update({_id: ObjectId(id)}, {$set:{isVerified:true, isActive:false}}, function(err){
+                        if(!err){
+                            res.send({error:false});
+                        }
+                        else throw err;
+                    })
+                }
+                else throw err;
+            });
+        }
+        catch(e){
+            res.send({error: e});
+        }
+    },
+    adminNews: function(req, res){
+        try {
+            MongoClient.connect(config.db.url, function(err, db) {
+                if (!err) {
+                    var collection = db.collection(config.db.collection);
+                    collection.find({isVerified:false}).limit(10).sort({_id:-1}).toArray(function(err, data){
+                        if(!err){
+                            var obj={};
+                            obj.data = data;
+                            collection.count({isVerified:false}, function(err, count){
+                                obj.count= count;
+                                res.send(obj);
+                            });
+                        }
+                        else throw err;
+
+                    });
+                }
+                else throw err;
+            });
+        }
+        catch(e){
+            res.send({error: e});
+        }
     },
     deleteNews: function(req, res) {
         res.send("delete news")
