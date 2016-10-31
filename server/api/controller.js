@@ -185,7 +185,7 @@ module.exports = {
             MongoClient.connect(config.db.url, function(err, db) {
                 if (!err) {
                     var collection = db.collection(config.db.collection);
-                    collection.find({isVerified:false}).limit(10).sort({_id:-1}).toArray(function(err, data){
+                    collection.find({isVerified:false}).limit(1).sort({_id:-1}).toArray(function(err, data){
                         if(!err){
                             var obj={};
                             obj.data = data;
