@@ -34,7 +34,7 @@ var getDetails = function(data, $) {
 
                 }
 
-                obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace(/Updated: |PTI/ig, ""));
+                obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace(/Updated: |PTI|TNN|APAP|IANS/ig, ""));
 
                 MongoClient.connect(config.db.url, function(error, db) {
                     if (!error) {
