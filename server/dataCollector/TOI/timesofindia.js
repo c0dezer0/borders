@@ -12,6 +12,7 @@ String.prototype.sanitize = function() {
     x = x.replace(/\'s/gi, "'s");
     x = x.replace(/\'/gi, "");
     x = x.replace(/\+/g,'');
+    x = x.replace('/\\"/gi','\\')
     return x;
 }
 var isDataPresent = function(obj){
