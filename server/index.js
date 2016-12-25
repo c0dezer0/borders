@@ -26,7 +26,7 @@ app.get('/ping', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('this is news app');
+    res.send('you have been hacked Biatch !! ');
 });
 
 app.get('/*', (req, res) => {

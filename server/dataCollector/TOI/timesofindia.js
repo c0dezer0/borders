@@ -14,6 +14,28 @@ String.prototype.sanitize = function() {
     x = x.replace(/\+/g,'');
     return x;
 }
+var isDataPresent = function(obj){
+    var isValid = true;
+
+    if(!obj.title||obj.title.trim().length==0){
+        isValid=false;
+    }
+
+    if(!obj.title_full||obj.title_full.trim().length==0){
+        isValid=false;
+    }
+    if(!obj.body_full||obj.body_full.trim().length==0){
+        isValid=false;
+    }
+    if(!obj.media.src||obj.media.src.trim().length==0){
+        isValid=false;
+    }
+    if(!obj.publishedOn||obj.publishedOn.trim().length==0){
+        isValid=false;
+    }
+
+    return isValid;
+}
 var getDetails = function(data, $) {
     var obj = {};
     obj.title = "" + $(data).text().sanitize();
@@ -36,33 +58,39 @@ var getDetails = function(data, $) {
 
                 obj.publishedOn = (obj.url.indexOf('blog') >= 0 ? $('.date').text() : $('.time_cptn span').text().replace(/Updated: |PTI|TNN|APAP|IANS/ig, ""));
 
-                MongoClient.connect(config.db.url, function(error, db) {
-                    if (!error) {
-                        var collection = db.collection(config.db.collection);
-                        collection.count(obj, function(e, c) {
+                if(isDataPresent(obj)){
+                    MongoClient.connect(config.db.url, function(error, db) {
+                        if (!error) {
+                            var collection = db.collection(config.db.collection);
+                            collection.count(obj, function(e, c) {
 
-                            if (!c) {
+                                if (!c) {
 
-                                // TODO:
-                                //  change the isActive and make another function to validate it ;
-                                //  change pushNotify also
-                                collection.update({ url: obj.url }, { $set: { isVerified: true, isActive: false } }, { multi: true }, function(err, result) {
-                                    if (!err) {
-                                        obj.isActive = false;
-                                        obj.isVerified = false;
-                                        obj.pushNotify = false;
-                                        obj.date = (new Date()).getTime();
-                                        collection.insert(obj, function(err) {
-                                            if (err) console.log(err);
-                                        });
-                                    }
+                                    // TODO:
+                                    //  change the isActive and make another function to validate it ;
+                                    //  change pushNotify also
+                                    collection.update({ url: obj.url }, { $set: { isVerified: true, isActive: false } }, { multi: true }, function(err, result) {
+                                        if (!err) {
+                                            obj.isActive = true;
+                                            obj.isVerified = true;
+                                            obj.pushNotify = true;
+                                            obj.date = (new Date()).getTime();
+                                            collection.insert(obj, function(err) {
+                                                if (err) console.log(err);
+                                            });
+                                        }
 
-                                });
+                                    });
 
-                            }
-                        });
-                    }
-                });
+                                }
+                            });
+                        }
+                    });
+                }
+                else{
+                    console.log(obj.url);
+                }
+                
             } catch (e) {
                 console.log(e, obj.url);
             }
